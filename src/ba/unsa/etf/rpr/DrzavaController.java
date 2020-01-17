@@ -44,10 +44,15 @@ public class DrzavaController {
         if (drzava != null) {
             fieldNaziv.setText(drzava.getNaziv());
             choiceGrad.getSelectionModel().select(drzava.getGlavniGrad());
-            choiceGradNajveci.getSelectionModel().select(drzava.getGlavniGrad());
+            if (drzava.getNajveciGrad().equals(drzava.getGlavniGrad())) {
+                radioIsti.setSelected(true);
+            } else {
+                radioDrugi.setSelected(true);
+            }
+            choiceGradNajveci.getSelectionModel().select(drzava.getNajveciGrad());
         } else {
             choiceGrad.getSelectionModel().selectFirst();
-            choiceGradNajveci.getSelectionModel().selectFirst();
+            choiceGradNajveci.getSelectionModel().select(choiceGrad.getValue());
         }
     }
 
@@ -73,16 +78,21 @@ public class DrzavaController {
         drzava.setNaziv(fieldNaziv.getText());
         drzava.setGlavniGrad(choiceGrad.getSelectionModel().getSelectedItem());
         radioIsti.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue) {
-                choiceGradNajveci.setDisable(radioIsti.isSelected());
-            } else {
-                choiceGradNajveci.setDisable(!radioIsti.isSelected());
-            }
+            if (newValue)
+                choiceGradNajveci.setDisable(true);
         });
         Grad najveciGrad;
-        if (radioDrugi.isSelected()) {
+        radioDrugi.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                choiceGradNajveci.setDisable(false);
+                choiceGradNajveci.getSelectionModel().select(choiceGrad.getValue());
+            }
+        });
+        if (!choiceGradNajveci.isDisabled()) {
             najveciGrad = choiceGradNajveci.getSelectionModel().getSelectedItem();
             drzava.setNajveciGrad(najveciGrad);
+        } else {
+            drzava.setNajveciGrad(choiceGrad.getSelectionModel().getSelectedItem());
         }
         closeWindow();
     }
