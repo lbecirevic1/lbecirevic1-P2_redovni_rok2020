@@ -140,15 +140,9 @@ public class GeografijaDAO {
     }
 
     private Drzava dajDrzavuIzResultSeta(ResultSet rs) throws SQLException {
-        //Grad grad = new Grad();
-      //  grad = dajGrad(rs.getInt(4),)
         Drzava d = new Drzava(rs.getInt(1), rs.getString(2), null, null);
         d.setGlavniGrad( dajGrad(rs.getInt(3), d ));
-        if (dajGrad(rs.getInt(4),d) != null) {
-            d.setNajveciGrad(dajGrad(rs.getInt(4), d));
-        } else {
-            d.setNajveciGrad(dajGrad(rs.getInt(3), d ));
-        }
+        d.setNajveciGrad(dajGrad(rs.getInt(4), d));
         return d;
     }
 
@@ -217,13 +211,7 @@ public class GeografijaDAO {
         }
     }
 
- //   gradovi() koja vraća ArrayList<Grad> svih gradova u bazi podataka, sortiranih po broju stanovnika u opadajućem redoslijedu.
-//           dajGradUpit = conn.prepareStatement("SELECT * FROM grad WHERE id=?");
-    //uzmemo id date drzave i
-    //id grada sa najvecim brojem stanovnika u datoj drzavi
 
-    //porediti grad.drzava poredim sa drzava.id, naci sve gradove kojim je id jednak id-u drzave, smejstiti u array list id alje porediti
-    //kao ispod
     public void dodajDrzavu(Drzava drzava) {
         try {
             ResultSet rs = odrediIdDrzaveUpit.executeQuery();
@@ -231,34 +219,37 @@ public class GeografijaDAO {
             if (rs.next()) {
                 id = rs.getInt(1);
             }
-            ArrayList<Grad> lista = gradovi(); //sadrzi listu svih gradova u bazi
-            ArrayList<Grad> listaGradova = new ArrayList<>();
-            for (int i = 0; i < lista.size(); i = i + 1) {
-                if (lista.get(i).getDrzava().getId() == drzava.getId()) {
-                    listaGradova.add(lista.get(i));
-                }
-            }
-            int idGrada = drzava.getGlavniGrad().getId();
-
-            if (listaGradova.size() > 0) {
-                int najveciBrojStanovnika = listaGradova.get(0).getBrojStanovnika();
-                idGrada = listaGradova.get(0).getId();
-                for (int i = 1; i < listaGradova.size(); i = i + 1) {
-                    if (listaGradova.get(i).getBrojStanovnika() > najveciBrojStanovnika) {
-                        najveciBrojStanovnika = listaGradova.get(i).getBrojStanovnika();
-                        idGrada = listaGradova.get(i).getId();
-                    }
-                }
-            }
             dodajDrzavuUpit.setInt(1, id);
             dodajDrzavuUpit.setString(2, drzava.getNaziv());
             dodajDrzavuUpit.setInt(3, drzava.getGlavniGrad().getId());
-            dodajDrzavuUpit.setInt(4, idGrada);
+            dodajDrzavuUpit.setInt(4, drzava.getNajveciGrad().getId());
             dodajDrzavuUpit.executeUpdate();
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+            //OVAKO NE TREBAA!!!!!!!!!!
+//            ArrayList<Grad> lista = gradovi(); //sadrzi listu svih gradova u bazi
+//            ArrayList<Grad> listaGradova = new ArrayList<>();
+//            for (int i = 0; i < lista.size(); i = i + 1) {
+//                if (lista.get(i).getDrzava().getId() == drzava.getId()) {
+//                    listaGradova.add(lista.get(i));
+//                }
+//            }
+//            int idGrada = drzava.getGlavniGrad().getId();
+//
+//            if (listaGradova.size() > 0) {
+//                int najveciBrojStanovnika = listaGradova.get(0).getBrojStanovnika();
+//                idGrada = listaGradova.get(0).getId();
+//                for (int i = 1; i < listaGradova.size(); i = i + 1) {
+//                    if (listaGradova.get(i).getBrojStanovnika() > najveciBrojStanovnika) {
+//                        najveciBrojStanovnika = listaGradova.get(i).getBrojStanovnika();
+//                        idGrada = listaGradova.get(i).getId();
+//                    }
+//                }
+//            }
+
     }
 
     public void izmijeniGrad(Grad grad) {

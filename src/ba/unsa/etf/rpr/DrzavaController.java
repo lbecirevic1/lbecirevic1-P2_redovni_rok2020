@@ -1,6 +1,8 @@
 package ba.unsa.etf.rpr;
 
 import javafx.beans.binding.ObjectExpression;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -29,19 +31,12 @@ public class DrzavaController {
     public DrzavaController(Drzava drzava, ArrayList<Grad> gradovi) {
         this.drzava = drzava;
         listGradovi = FXCollections.observableArrayList(gradovi);
-//        for (int i = 0; i < gradovi.size(); i = i + 1) {
-//            listDrzave.add(gradovi.get(i).getDrzava());
-//        }
-//        for (int i = 0; i < listDrzave.size(); i = i + 1) {
-//            listNajveciGradovi.add(listDrzave.get(i).getNajveciGrad());
-//        }
 
     }
 
     @FXML
     public void initialize() {
         choiceGrad.setItems(listGradovi);
-       // choiceGradNajveci.setItems(listNajveciGradovi);
         choiceGradNajveci.setItems(listGradovi);
         radioIsti.setToggleGroup(group);
         radioDrugi.setToggleGroup(group);
@@ -52,7 +47,7 @@ public class DrzavaController {
             choiceGradNajveci.getSelectionModel().select(drzava.getGlavniGrad());
         } else {
             choiceGrad.getSelectionModel().selectFirst();
-            choiceGrad.getSelectionModel().selectFirst();
+            choiceGradNajveci.getSelectionModel().selectFirst();
         }
     }
 
@@ -77,11 +72,15 @@ public class DrzavaController {
         if (drzava == null) drzava = new Drzava();
         drzava.setNaziv(fieldNaziv.getText());
         drzava.setGlavniGrad(choiceGrad.getSelectionModel().getSelectedItem());
-
+        radioIsti.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                choiceGradNajveci.setDisable(radioIsti.isSelected());
+            } else {
+                choiceGradNajveci.setDisable(!radioIsti.isSelected());
+            }
+        });
         Grad najveciGrad;
-        if (radioIsti.isSelected()) {
-            choiceGradNajveci.isDisabled();
-        } else if (radioDrugi.isSelected()) {
+        if (radioDrugi.isSelected()) {
             najveciGrad = choiceGradNajveci.getSelectionModel().getSelectedItem();
             drzava.setNajveciGrad(najveciGrad);
         }

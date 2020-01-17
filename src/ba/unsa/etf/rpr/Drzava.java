@@ -45,6 +45,8 @@ public class Drzava {
     }
 
     public void setGlavniGrad(Grad glavniGrad) {
+        if (najveciGrad == null)
+            setNajveciGrad(glavniGrad);
         this.glavniGrad = glavniGrad;
     }
 
