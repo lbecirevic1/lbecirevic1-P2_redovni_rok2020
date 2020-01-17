@@ -1,4 +1,4 @@
-/*package ba.unsa.etf.rpr;
+package ba.unsa.etf.rpr;
 
 import org.junit.jupiter.api.Test;
 
@@ -115,4 +115,3 @@ public class IspitDAOTest {
         }
     }
 }
-*/
